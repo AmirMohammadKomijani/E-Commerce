@@ -63,5 +63,4 @@ func RemoveCartItem(ctx context.Context, prodCollection, userCollection *mongo.C
 		return ErrCantRemoveItem
 	}
 	return nil
-
 }
