@@ -134,3 +134,20 @@ func GetItemFromCart() gin.HandlerFunc {
 		ctx.Done()
 	}
 }
+
+func (app *Application) BuyFromCart() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userQueryID := c.Query("id")
+		if userQueryID == "" {
+			log.Panicln("user id is empty")
+			_ = c.AbortWithError(http.StatusBadRequest, errors.New("UserID is empty"))
+		}
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		defer cancel()
+		err := database.BuyItemFromCart(ctx, app.userCollection, userQueryID)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, err)
+		}
+		c.IndentedJSON(200, "Successfully Placed the order")
+	}
+}
